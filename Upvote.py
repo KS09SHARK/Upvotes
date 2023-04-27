@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 train = pd.read_csv('Train_Set.csv')
 test = pd.read_csv('Test_Set.csv')
 
+#Basic EDA and Feature Engineering
 train['Tag'].value_counts()
 train.drop(['ID','Username'],axis = 1, inplace = True)
 test.drop(['ID','Username'],axis = 1, inplace = True)
@@ -22,8 +23,13 @@ X = train['Views'].values.reshape(-1,1)
 Y = train['Upvotes']
 X = pd.DataFrame(X)
 
+#Splitting the data into train and test
 from sklearn.cross_validation import train_test_split
 X_train, X_cv, Y_train, Y_cv = train_test_split(X,Y,test_size = 0.2, random_state = 9)
+
+#Training Upvotes on Views (most significant correlation) via Forward Propogation (Appending variables with subsequent run)
+
+#Run 1
 
 from sklearn.linear_model import LinearRegression
 regressor = LinearRegression()
@@ -41,7 +47,10 @@ regressor_OLS = sm.OLS(endog = Y_train,exog = X_train).fit()
 
 regressor_OLS.summary()
 
-df_2 = [X,train['Reputation']]
+#Run 2
+
+
+df_2 = [X_train['Reputation']]
 df_2 = pd.concat(df_2,axis = 1)
 
 from sklearn.cross_validation import train_test_split
@@ -61,7 +70,9 @@ rmse_2 = sqrt(mean_squared_error(Y_pred_cv_2,Y_cv))
 import statsmodels.formula.api as sm
 regressor_OLS = sm.OLS(endog = Y_train,exog = X_train).fit()
 
-df_3 = [df_2,train['Answers']]
+#Run 3
+
+df_3 = [df_2_train['Answers']]
 df_3 = pd.concat(df_3,axis = 1)
 
 from sklearn.cross_validation import train_test_split
@@ -82,6 +93,8 @@ import statsmodels.formula.api as sm
 regressor_OLS = sm.OLS(endog = Y_train,exog = X_train).fit()
 
 regressor_OLS.summary()
+
+#Run 4
 
 df_4 = [train,test]
 df_4 = pd.concat(df_4,axis = 0)
@@ -121,6 +134,7 @@ y_pred = pd.DataFrame(y_pred)
 
 y_pred.to_csv('Sample.csv')
 
+#Measuring the sucessive runs with socring mertics
 
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelEncoder
@@ -128,6 +142,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
 
+
+#Encoding Tag variable to check the incremental impact on scoring
 labelencoder_X = LabelEncoder()
 train['Tag'] = labelencoder_X.fit_transform(train['Tag'])
 test['Tag'] = labelencoder_X.transform(test['Tag'])
@@ -146,16 +162,6 @@ y_pred = pd.DataFrame(y_pred)
 y_pred.to_csv('Sample.csv')
 
 
-
-Skip to content
- 
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
 @KS09SHARK 
 Learn Git and GitHub without any code!
 Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
